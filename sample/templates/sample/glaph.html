@@ -1,0 +1,171 @@
+{% extends 'sample/base.html' %}
+
+{% block script %}
+<script>
+ var socket;
+ var messages = [];
+ function init(){
+     socket = new WebSocket("ws://127.0.0.1:8000/ws");
+     socket.onmessage = function(e) {
+	 data = JSON.parse(e.data)
+	 addData(data.x, data.y)
+	 updateGlaph()
+     }
+     socket.onopen = function() { /* 接続時の処理 */ }
+     socket.onclose = function() {
+	 /* 切断時の処理 */
+	 xdata = []
+	 ydata = []
+     }
+ }
+
+ init();
+
+ function sleep(time){
+     const d1 = new Date();
+     while (true) {
+	 const d2 = new Date();
+	 if (d2 - d1 > time) {
+	     break;
+	 }
+     }
+ }
+
+ xdata = [];
+ ydata = [];
+ window.onload = function() {
+     config = {
+	 type: 'line',
+	 data: {
+ 	     labels: [],
+ 	     datasets: [{
+ 		 label: "My First dataset",
+ 		 borderColor: "rgba(179,181,198,1)",
+ 		 backgroundColor: "rgba(179,181,198,0.2)",
+ 		 fill: false,
+ 		 lineTension: 0,
+ 		 data: []
+ 	     }]
+	 },
+	 options: {
+	     scales: {
+		 yAxes: [
+		     {
+			 ticks: {
+			     beginAtZero: true,
+			     min: 0,
+			     max: 10
+			 }
+		     }
+		 ]
+	     }
+	 }
+     }
+     var ctx = document.getElementById('myChart');
+     glaph = new Chart(ctx, config);
+ }
+
+ function newGlaph() {
+     config2 = {
+	 type: 'line',
+	 data: {
+ 	     labels: [],
+ 	     datasets: [{
+ 		 label: "My First dataset",
+ 		 borderColor: "rgba(179,181,198,1)",
+ 		 backgroundColor: "rgba(179,181,198,0.2)",
+ 		 fill: false,
+ 		 lineTension: 0,
+ 		 data: []
+ 	     }]
+	 },
+	 options: {}
+     }
+     var ctx = document.getElementById('myChart2');
+     glaph2 = new Chart(ctx, config2);
+ }
+
+ var arr_length = 200
+ function adjustXrange(){
+     arr_length = document.getElementById('x_range').value;
+ }
+ function adjustYrange(){
+     config.options.scales.yAxes[0].ticks.min  = 0
+     config.options.scales.yAxes[0].ticks.max  = document.getElementById('y_range').value;
+ }
+ 
+ function addData(x, y){
+     xdata.push(x.toString());
+     ydata.push(y);
+     if (xdata.length > arr_length ){ xdata = xdata.slice(xdata.length-arr_length,xdata.length) }
+     if (ydata.length > arr_length ){ ydata = ydata.slice(ydata.length-arr_length,ydata.length) }
+ }
+ function updateGlaph(){
+     config.data.labels = xdata;
+     config.data.datasets[0].data = ydata;
+     glaph.update();
+ }
+ function resetGlaph(){
+     config.data.labels = [];
+     config.data.datasets[0].data = [];
+     glaph.update();
+ }
+ function adjustmentGlaph(){
+     var x1 = document.getElementById('x1').value;
+     var x2 = document.getElementById('x2').value;
+
+     console.log(x1);
+     console.log(x2);
+     x1_index = xdata.indexOf(x1);
+     x2_index = xdata.indexOf(x2);
+
+     console.log(xdata[x1_index]);
+     console.log(xdata[x2_index]);
+     config2.data.labels = xdata.slice(x1_index, x2_index);
+     config2.data.datasets[0].data = ydata.slice(x1_index, x2_index);
+     glaph2.update();
+ }
+</script>
+{% endblock %}
+
+
+{% block body %}
+<h1>サンプル</h1>
+
+<div class="chart-container" style="position: relative; width: 1000px;">
+    <canvas id="myChart"></canvas>
+</div>
+
+<!-- <div>
+     <button onclick="updateGlaph()" value="start">update</button>
+     </div>
+     <div>
+     <input type="number" id="x1">
+     <input type="number" id="x2">
+     <button onclick="newGlaph();adjustmentGlaph()">adjustment</button>
+     </div> -->
+
+<div style="padding:20px">
+    <p>x軸-表示数</p>
+    <p>デフォルト：200</p>
+    <input type="number" id="x_range">
+    <button onclick="adjustXrange()" value="x_range">セット</button>
+</div>
+
+
+<!-- <div style="padding:20px">
+     <p>y軸-最大値</p>
+     <input type="number" id="y_range">
+     <button onclick="adjustYrange()" value="y_range">セット</button>
+     </div> -->
+
+<div style="padding:20px">
+    <button onclick="resetGlaph()" value="start">reset</button>
+</div>
+
+<!-- <div class="chart-container" style="position: relative; width: 1000px;">
+     <canvas id="myChart2"></canvas>
+     </div> -->
+
+<div style="padding:20px"><button><a href="/">戻る</a></button></div>
+{% endblock %}

@@ -1,108 +1,42 @@
 {% extends 'sample/base.html' %}
 
 {% block script %}
-<script>
- var socket;
- var messages = [];
- function init(){
-     socket = new WebSocket("ws://127.0.0.1:8000/ws");
-     socket.onmessage = function(e) {
-	 data = JSON.parse(e.data)
-	 addData(data.x, data.y)
-	 updateGlaph()
-     }
-     socket.onopen = function() { /* 接続時の処理 */ }
-     socket.onclose = function() {
-	 /* 切断時の処理 */
-	 xdata = []
-	 ydata = []
-     }
- }
-
- init();
-
- function sleep(time){
-     const d1 = new Date();
-     while (true) {
-	 const d2 = new Date();
-	 if (d2 - d1 > time) {
-	     break;
-	 }
-     }
- }
-
- xdata = [0];
- ydata = [0];
- window.onload = function() {
-     config = {
-	 type: 'line',
-	 data: {
- 	     labels: [],
- 	     datasets: [{
- 		 label: "My First dataset",
- 		 borderColor: "rgba(179,181,198,1)",
- 		 backgroundColor: "rgba(179,181,198,0.2)",
- 		 fill: false,
- 		 lineTension: 0,
- 		 data: []
- 	     }]
-	 },
-	 options: {}
-     }
-     var ctx = document.getElementById('myChart');
-     glaph = new Chart(ctx, config);
- }
- function addData(x, y){
-     xdata.push(x.toString());
-     ydata.push(y);
- }
- function updateGlaph(){
-     config.data.labels = xdata;
-     config.data.datasets[0].data = ydata;
-     glaph.update();
- }
- function resetGlaph(){
-     config.data.labels = [];
-     config.data.datasets[0].data = [];
-     glaph.update();
- }
- function AdjustmentGlaph(){
-     var x1 = document.getElementById('x1').value;
-     var x2 = document.getElementById('x2').value;
-
-     console.log(x1);
-     console.log(x2);
-     x1_index = xdata.indexOf(x1);
-     x2_index = xdata.indexOf(x2);
-
-     console.log(xdata[x1_index]);
-     console.log(xdata[x2_index]);
-     config.data.labels = xdata.slice(xdata[x1_index],xdata[x2_index]);
-     config.data.datasets[0].data = ydata.slice(ydata[x1], ydata[x2]);
-     glaph.update();
- }
-
-</script>
 {% endblock %}
 
 
 {% block body %}
-<h1>サンプル</h1>
 
-<div class="chart-container" style="position: relative; width: 1000px;">
-    <canvas id="myChart"></canvas>
+<div style="padding:20px">
+    <div style="padding:10px">learning sample</div>
+
+    <div style="padding:20px">
+	<button><a href="/progress">プロセスを確認する</a></button>
+    </div>
+ 
+    <div style="padding:20px">
+	<form action = "/start" method = "get">
+	    <button>学習を開始する</button>
+	</form>
+    </div>
+
+    <div style="padding:20px">
+	<form action = "/stop" method = "get">
+	    <button>学習をやめる</button>
+	</form>
+    </div>
+
+    <div style="padding:20px">
+	<button><a href="/glaph">グラフを表示する</a></button>
+    </div>
+
+    <div style="padding:20px">
+      <p>未実装</p>
+      <!-- <button><a href="/result">文章を生成する</a></button> -->
+      <button>文章を生成する</button>
+    </div>
 </div>
 
-<div>
-    <button onclick="updateGlaph()" value="start">update</button>
-</div>
-<div>
-    <input type="number" id="x1">
-    <input type="number" id="x2">
-    <button onclick="AdjustmentGlaph()">adjustment</button>
-</div>
-<div>
-    <button onclick="resetGlaph()" value="start">reset</button>    
-</div>
 
 {% endblock %}
+
+
