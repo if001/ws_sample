@@ -2,10 +2,14 @@ from django.shortcuts import render
 
 # Create your views here.
 from django.http import HttpResponse
+from django.http.response import JsonResponse
+
 from channels import Group
 import json
 
 from . import consumers
+from . import Const
+
 
 def index(request):
     return render(request, 'sample/index.html')
@@ -27,11 +31,7 @@ def glaph(request):
 def publish(request):
     x = request.GET.get('x', 'null')
     y = request.GET.get('y', 'null')
-    Group("sample").send({"text": json.dumps({
-        "x": x,
-        "y": y
-    })
-    })
+    Group("sample").send({"text": json.dumps({"x": x,"y": y})})
     print(x,y)
     return HttpResponse("Published!")
 
@@ -40,39 +40,50 @@ def get_data(request):
     pass
 
 
+
+"""
+以下API
+"""
+
 from sample.script.RunPython import RunPython
 learning = RunPython("loop.py")
 kafka_mes_ws = RunPython("send_req.py")
 
+
 def start_learing(request):
-    status = learning.start()
-    message = { "message" : status}
-    return render(request, 'sample/learning.html',message)
+    status_msg = learning.start()
+    return Const.Const().toOkResult({"learning" : status_msg})
 
 
 def stop_learing(request):
     learning.stop()
-    # return HttpResponse(stop)
-    return render(request, 'sample/index.html')
+    return Const.Const().toOkResult({"learning" : "stop"})
 
 
 def get_pid(request):
     pid = learning.get_pid()
     if pid == "" :
-        message = {"message" : "実行されてません"}
+        msg = {"pid":"none"}
     else :
-        message = {"message" : "実行中です "+str(pid)}
-    return render(request, 'sample/progress.html', message)
+        msg = {"pid":str(pid)}
+    return Const.Const().toOkResult(msg)
 
 
 def start_kafka_cons(request):
-    status = kafka_mes_ws.start()
-    message = { "message" : status }
-    return render(request, 'sample/learning.html',message)
+    status_msg = kafka_mes_ws.start()
+    return Const.Const().toOkResult({"learning" : status_msg})
 
 
 def stop_kafka_cons(request):
-    learning.stop()
-    # return HttpResponse(stop)
-    return render(request, 'sample/index.html')
+    kafka_mes_ws.stop()
+    return Const.Const().toOkResult({"learning" : "stop"})
 
+
+def get_kafka_cons_pid(request):
+    pid = kafka_mes_ws.get_pid()
+
+    if pid == "" :
+        msg = { "pid" : "none" }
+    else :
+        msg = { "pid" : str(pid) }
+    return Const.Const().toOkResult(msg)

@@ -14,10 +14,10 @@ class RunPython():
     def start(self):
         if self.pid == "":
             res = self.th.start()
-            message = "start" + str(res)
+            message = "start"
             self.pid = self.get_pid()
         else :
-            message = "It is already running"
+            message = "already running"
         return message
 
 

@@ -10,9 +10,21 @@
     <div style="padding:10px">learning sample</div>
 
     <div style="padding:20px">
-	<button><a href="/progress">プロセスを確認する</a></button>
+	<button><a href="/process">プロセスを確認する</a></button>
     </div>
- 
+
+    <div style="padding:20px">
+	<form action = "/start_kafka" method = "get">
+	    <button>kafka-consumerを開始する</button>
+	</form>
+    </div>
+    <div style="padding:20px">
+	<form action = "/stop_kafka" method = "get">
+	    <button>kafka-consumerを停止する</button>
+	</form>
+    </div>
+
+
     <div style="padding:20px">
 	<form action = "/start" method = "get">
 	    <button>学習を開始する</button>
@@ -21,7 +33,7 @@
 
     <div style="padding:20px">
 	<form action = "/stop" method = "get">
-	    <button>学習をやめる</button>
+	    <button>学習を停止する</button>
 	</form>
     </div>
 

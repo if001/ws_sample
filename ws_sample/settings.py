@@ -26,7 +26,7 @@ SECRET_KEY = 'g146rou1g&1qqfgj++25%$@$*nt0=w05@bf#+8i((x8d4k-kkl'
 DEBUG = True
 # DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["localhost", '127.0.0.1']
 
 
 # Application definition
@@ -53,6 +53,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'ws_sample.urls'
+
+CORS_ORIGIN_ALLOW_ALL = True
 
 TEMPLATES = [
     {
